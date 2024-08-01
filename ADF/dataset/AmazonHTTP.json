@@ -15,7 +15,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "HttpServerLocation",
-				"relativeUrl": "@concat('abdulmalik022/ecommerce-sales/main/', dataset().filePath)"
+				"relativeUrl": {
+					"value": "@concat(dataset().filePath)",
+					"type": "Expression"
+				}
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
