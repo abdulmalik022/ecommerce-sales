@@ -1,0 +1,12 @@
+{
+	"name": "AmazonHTTP",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://media.githubusercontent.com/media/abdulmalik022/ecommerce-sales/main/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
