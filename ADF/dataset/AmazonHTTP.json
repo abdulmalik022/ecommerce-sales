@@ -1,0 +1,27 @@
+{
+	"name": "AmazonHTTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AmazonHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"filePath": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "@concat('abdulmalik022/ecommerce-sales/main/', dataset().filePath)"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
