@@ -9,9 +9,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "[\n  \"Cloud Warehouse Compersion Chart.csv\",\n  \"Amazon Sale Report.csv\",\n  \"Expense IIGF.csv\",\n\"International sale Report.csv\",\"May-2022.csv\",\"P L March 2021.csv\",\"Sale Report.csv\"\n]",
+						"value": "[\n  \"Cloud Warehouse Compersion Chart.csv\",\n  \"Amazon Sale Report.csv\",\n  \"Expense IIGF.csv\",\n  \"International sale Report.csv\",\n  \"May-2022.csv\",\n  \"P L March 2021.csv\",\n  \"Sale Report.csv\"\n]",
 						"type": "Expression"
 					},
+					"isSequential": false,
 					"activities": [
 						{
 							"name": "Copy data1",
@@ -39,7 +40,8 @@
 								"sink": {
 									"type": "DelimitedTextSink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "PreserveHierarchy"
 									},
 									"formatSettings": {
 										"type": "DelimitedTextWriteSettings",
