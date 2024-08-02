@@ -9,10 +9,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "[\n  \"Cloud Warehouse Compersion Chart.csv\",\n  \"Amazon Sale Report.csv\",\n  \"Expense IIGF.csv\",\n  \"International sale Report.csv\",\n  \"May-2022.csv\",\n  \"P L March 2021.csv\",\n  \"Sale Report.csv\"\n]",
+						"value": "@json('[\n    \"Amazon Sale Report.csv\",\n    \"Cloud Warehouse Compersion Chart.csv\",\n    \"Expense IIGF.csv\",\n    \"International sale Report.csv\",\n    \"May-2022.csv\",\n    \"PL-March2021.csv\",\n    \"Sale Report.csv\"\n]')\n",
 						"type": "Expression"
 					},
-					"isSequential": false,
+					"isSequential": true,
 					"activities": [
 						{
 							"name": "Copy data1",
@@ -79,6 +79,40 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "AmazonHTTP",
+						"type": "DatasetReference",
+						"parameters": {
+							"filePath": "Amazon Sale Report.csv"
+						}
+					}
 				}
 			}
 		],
