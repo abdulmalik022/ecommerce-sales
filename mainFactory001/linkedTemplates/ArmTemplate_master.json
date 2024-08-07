@@ -15,9 +15,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'Storage1'"
 		},
+		"mainproject_link_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'mainproject_link'"
+		},
 		"AmazonHTTP_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://media.githubusercontent.com/media/"
+			"defaultValue": "https://media.githubusercontent.com/media/abdulmalik022/ecommerce-sales/main/"
 		},
 		"Github_properties_typeProperties_url": {
 			"type": "string",
@@ -63,6 +67,9 @@
 					},
 					"Storage1_accountKey": {
 						"value": "[parameters('Storage1_accountKey')]"
+					},
+					"mainproject_link_accessToken": {
+						"value": "[parameters('mainproject_link_accessToken')]"
 					},
 					"AmazonHTTP_properties_typeProperties_url": {
 						"value": "[parameters('AmazonHTTP_properties_typeProperties_url')]"

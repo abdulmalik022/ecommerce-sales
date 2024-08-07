@@ -11,8 +11,11 @@
 		"Storage1_accountKey": {
 			"value": ""
 		},
+		"mainproject_link_accessToken": {
+			"value": ""
+		},
 		"AmazonHTTP_properties_typeProperties_url": {
-			"value": "https://media.githubusercontent.com/media/"
+			"value": "https://media.githubusercontent.com/media/abdulmalik022/ecommerce-sales/main/"
 		},
 		"Github_properties_typeProperties_url": {
 			"value": "https://mainproject.dfs.core.windows.net/"

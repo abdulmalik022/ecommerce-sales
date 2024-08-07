@@ -15,9 +15,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'Storage1'"
 		},
+		"mainproject_link_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'mainproject_link'"
+		},
 		"AmazonHTTP_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://media.githubusercontent.com/media/"
+			"defaultValue": "https://media.githubusercontent.com/media/abdulmalik022/ecommerce-sales/main/"
 		},
 		"Github_properties_typeProperties_url": {
 			"type": "string",
@@ -37,7 +41,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/ingest-rawdata')]",
+			"name": "[concat(parameters('factoryName'), '/ingest-rawdata-bronze')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -49,9 +53,10 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "[[\n  \"Cloud Warehouse Compersion Chart.csv\",\n  \"Amazon Sale Report.csv\",\n  \"Expense IIGF.csv\",\n\"International sale Report.csv\",\"May-2022.csv\",\"P L March 2021.csv\",\"Sale Report.csv\"\n]",
+								"value": "@json('[\n    \"Amazon Sale Report.csv\",\n    \"Cloud Warehouse Compersion Chart.csv\",\n    \"Expense IIGF.csv\",\n    \"International sale Report.csv\",\n    \"May-2022.csv\",\n    \"PL-March2021.csv\",\n    \"Sale Report.csv\"\n]')\n",
 								"type": "Expression"
 							},
+							"isSequential": true,
 							"activities": [
 								{
 									"name": "Copy data1",
@@ -79,7 +84,8 @@
 										"sink": {
 											"type": "DelimitedTextSink",
 											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
+												"type": "AzureBlobFSWriteSettings",
+												"copyBehavior": "PreserveHierarchy"
 											},
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
@@ -119,6 +125,40 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "AmazonHTTP",
+								"type": "DatasetReference",
+								"parameters": {
+									"filePath": "Amazon Sale Report.csv"
+								}
+							}
+						}
 					}
 				],
 				"policy": {
@@ -151,7 +191,7 @@
 					"location": {
 						"type": "HttpServerLocation",
 						"relativeUrl": {
-							"value": "@concat('abdulmalik022/ecommerce-sales/main/', dataset().filePath)",
+							"value": "@concat(dataset().filePath)",
 							"type": "Expression"
 						}
 					},
@@ -256,6 +296,122 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Silver and Gold transformation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Silver-Gold",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/npathan@confederationcollege.ca/sales-comparison (silver-layer transformation)"
+						},
+						"linkedServiceName": {
+							"referenceName": "mainproject_link",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/mainproject_link')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mainproject_link')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-3938233987862582.2.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('mainproject_link_accessToken')]"
+					},
+					"newClusterNodeType": "Standard_DS3_v2",
+					"newClusterNumOfWorker": "1",
+					"newClusterVersion": "14.3.x-scala2.12",
+					"clusterOption": "Fixed",
+					"newClusterInitScripts": []
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Main Pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ingest-rawdata-bronze",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Execute Pipeline2",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Execute Pipeline1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Silver and Gold transformation",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ingest-rawdata-bronze')]",
+				"[concat(variables('factoryId'), '/pipelines/Silver and Gold transformation')]"
+			]
 		}
 	]
 }
