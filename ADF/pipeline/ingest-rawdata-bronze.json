@@ -1,5 +1,5 @@
 {
-	"name": "ingest-rawdata",
+	"name": "ingest-rawdata-bronze",
 	"properties": {
 		"activities": [
 			{
